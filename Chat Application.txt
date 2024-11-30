@@ -1,0 +1,95 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+public class TwoPersonChatApp {
+    public static void main(String[] args) {
+        // Create the main frame
+        JFrame frame = new JFrame("Two-Person Chat Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 500);
+
+        // Sender panel
+        JPanel senderPanel = new JPanel(new BorderLayout());
+        JTextArea senderChatArea = new JTextArea();
+        senderChatArea.setEditable(false); // Sender's chat area (read-only)
+        senderChatArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        senderChatArea.setLineWrap(true);
+        senderChatArea.setWrapStyleWord(true);
+        JScrollPane senderScrollPane = new JScrollPane(senderChatArea);
+
+        JTextField senderMessageField = new JTextField();
+        senderMessageField.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        JButton senderSendButton = new JButton("Send");
+        senderSendButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+        JPanel senderInputPanel = new JPanel(new BorderLayout());
+        senderInputPanel.add(senderMessageField, BorderLayout.CENTER);
+        senderInputPanel.add(senderSendButton, BorderLayout.EAST);
+
+        senderPanel.add(new JLabel("Sender's Chat"), BorderLayout.NORTH);
+        senderPanel.add(senderScrollPane, BorderLayout.CENTER);
+        senderPanel.add(senderInputPanel, BorderLayout.SOUTH);
+
+        // Receiver panel
+        JPanel receiverPanel = new JPanel(new BorderLayout());
+        JTextArea receiverChatArea = new JTextArea();
+        receiverChatArea.setEditable(false); // Receiver's chat area (read-only)
+        receiverChatArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        receiverChatArea.setLineWrap(true);
+        receiverChatArea.setWrapStyleWord(true);
+        JScrollPane receiverScrollPane = new JScrollPane(receiverChatArea);
+
+        JTextField receiverMessageField = new JTextField();
+        receiverMessageField.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        JButton receiverSendButton = new JButton("Send");
+        receiverSendButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+        JPanel receiverInputPanel = new JPanel(new BorderLayout());
+        receiverInputPanel.add(receiverMessageField, BorderLayout.CENTER);
+        receiverInputPanel.add(receiverSendButton, BorderLayout.EAST);
+
+        receiverPanel.add(new JLabel("Receiver's Chat"), BorderLayout.NORTH);
+        receiverPanel.add(receiverScrollPane, BorderLayout.CENTER);
+        receiverPanel.add(receiverInputPanel, BorderLayout.SOUTH);
+
+        // Combine the two panels into the main frame
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, senderPanel, receiverPanel);
+        splitPane.setDividerLocation(300); // Split in the middle
+        splitPane.setResizeWeight(0.5);
+
+        frame.add(splitPane);
+
+        // ActionListeners for communication
+        ActionListener senderAction = e -> {
+            String message = senderMessageField.getText().trim();
+            if (!message.isEmpty()) {
+                String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                senderChatArea.append("You [" + time + "]: " + message + "\n");
+                receiverChatArea.append("Sender [" + time + "]: " + message + "\n");
+                senderMessageField.setText("");
+            }
+        };
+
+        ActionListener receiverAction = e -> {
+            String message = receiverMessageField.getText().trim();
+            if (!message.isEmpty()) {
+                String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                receiverChatArea.append("You [" + time + "]: " + message + "\n");
+                senderChatArea.append("Receiver [" + time + "]: " + message + "\n");
+                receiverMessageField.setText("");
+            }
+        };
+
+        senderSendButton.addActionListener(senderAction);
+        senderMessageField.addActionListener(senderAction);
+
+        receiverSendButton.addActionListener(receiverAction);
+        receiverMessageField.addActionListener(receiverAction);
+
+        // Make the frame visible
+        frame.setVisible(true);
+    }
+}
